@@ -53,7 +53,7 @@ namespace TestConsoleApp
             return token;
         }
 
-        private static long WriteEntry(String token, String worker, string date)
+        private static string WriteEntry(String token, String worker, string date)
         {
 
             var client = new RestClient("https://ad-ctp-10-38eb6867baef10230aos.cloudax.dynamics.com/api/services/TSTimesheetServices/TSTimesheetSubmissionService/findOrCreateTimesheet");
@@ -68,12 +68,12 @@ namespace TestConsoleApp
             var response = client.Execute(request);
             dynamic resp = JObject.Parse(response.Content);
 
-            var timesheetNbr = (long)resp.parmTimesheetNbr;
+            var timesheetNbr = resp.parmTimesheetNbr;
 
             return timesheetNbr;
         }
 
-        private static void WriteDetails(String token, String worker, string date, long timesheetNbr, String project, String activity, string hours, String dataAreaId)
+        private static void WriteDetails(String token, String worker, string date, string timesheetNbr, String project, String activity, string hours, String dataAreaId)
         {
             //var entry = new JObject
             //{
