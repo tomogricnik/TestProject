@@ -20,15 +20,15 @@ namespace TestConsoleApp
             String activity = "W00002480";
             String dataAreaId = "ussi";
 
-            var entryId = WriteEntry(token, worker, date);
-            WriteDetails(token, worker, date, entryId, project, activity, hours, dataAreaId);
+            var timesheetNbr = WriteEntry(token, worker, date);
+            WriteDetails(token, worker, date, timesheetNbr, project, activity, hours, dataAreaId);
 
             date = "2019-09-06";
             hours = "5";
             activity = "W00002388";
 
-            entryId = WriteEntry(token, worker, date);
-            WriteDetails(token, worker, date, entryId, project, activity, hours, dataAreaId);
+            timesheetNbr = WriteEntry(token, worker, date);
+            WriteDetails(token, worker, date, timesheetNbr, project, activity, hours, dataAreaId);
         }
 
         private static string Authenticate()
@@ -68,12 +68,12 @@ namespace TestConsoleApp
             var response = client.Execute(request);
             dynamic resp = JObject.Parse(response.Content);
 
-            var headerId = (long)resp.parmHeaderRecId;
+            var timesheetNbr = (long)resp.parmTimesheetNbr;
 
-            return headerId;
+            return timesheetNbr;
         }
 
-        private static void WriteDetails(String token, String worker, string date, long headerId, String project, String activity, string hours, String dataAreaId)
+        private static void WriteDetails(String token, String worker, string date, long timesheetNbr, String project, String activity, string hours, String dataAreaId)
         {
             //var entry = new JObject
             //{
@@ -103,7 +103,7 @@ namespace TestConsoleApp
             var entry = new
             {
                 parmResource = worker ,
-                parmTimesheetNumber = headerId,
+                parmTimesheetNumber = timesheetNbr,
                 parmProjectDataAreaId = dataAreaId ,
                 parmProjId = project,
                 parmProjActivityNumber = activity ,
@@ -130,7 +130,7 @@ namespace TestConsoleApp
             request.AddHeader("Content-Type", "application/json");
 
             request.RequestFormat = DataFormat.Json;
-            request.AddJsonBody(tsEntryList);
+            request.AddBody(tsEntryList);
 
             IRestResponse response = client.Execute(request);
             dynamic resp = JObject.Parse(response.Content);
