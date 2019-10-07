@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using RestSharp;
 using System;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
 
 namespace TestConsoleApp
@@ -75,29 +75,53 @@ namespace TestConsoleApp
 
         private static void WriteDetails(String token, String worker, string date, long headerId, String project, String activity, string hours, String dataAreaId)
         {
-            var entry = new JObject
+            //var entry = new JObject
+            //{
+            //    { "parmResource", worker },
+            //    { "parmTimesheetNumber", headerId },
+            //    { "parmProjectDataAreaId", dataAreaId },
+            //    { "parmProjId", project },
+            //    { "parmProjActivityNumber", activity },
+            //    { "parmEntryDate", date },
+            //    { "parmHrsPerDay", 4 },
+            //    { "customFields", new JArray() },
+            //};
+            //var eList = new JArray();
+            //eList.Add(entry);
+
+            //var entryList = new JObject
+            //{
+            //    {"entryList", eList }
+            //};
+
+
+            //var tsEntryList = new JObject
+            //{
+            //    { "_tsTimesheetEntryList", entryList }
+            //};
+
+            var entry = new
             {
-                { "parmResource", worker },
-                { "parmTimesheetNumber", headerId },
-                { "parmProjectDataAreaId", dataAreaId },
-                { "parmProjId", project },
-                { "parmProjActivityNumber", activity },
-                { "parmEntryDate", date },
-                { "parmHrsPerDay", 4 },
-                { "customFields", new JArray() },
+                parmResource = worker ,
+                parmTimesheetNumber = headerId,
+                parmProjectDataAreaId = dataAreaId ,
+                parmProjId = project,
+                parmProjActivityNumber = activity ,
+                parmEntryDate = date ,
+                parmHrsPerDay = 4
             };
-            var eList = new JArray();
-            eList.Add(entry);
 
-            var entryList = new JObject
+            object[] eList = new object[1];
+            eList[0] = entry;
+
+            var entryList = new
             {
-                {"entryList", eList }
+                entryList = eList
             };
 
-
-            var tsEntryList = new JObject
+            var tsEntryList = new
             {
-                { "_tsTimesheetEntryList", entryList }
+                _tsTimesheetEntryList = entryList 
             };
 
             var client = new RestClient("https://ad-ctp-10-38eb6867baef10230aos.cloudax.dynamics.com/api/services/TSTimesheetServices/TSTimesheetSubmissionService/createOrUpdateTimesheetLine");
@@ -106,9 +130,12 @@ namespace TestConsoleApp
             request.AddHeader("Content-Type", "application/json");
 
             request.RequestFormat = DataFormat.Json;
-            request.AddBody(tsEntryList);
+            request.AddJsonBody(tsEntryList);
 
-            dynamic response = client.Execute(request);
+            IRestResponse response = client.Execute(request);
+            dynamic resp = JObject.Parse(response.Content);
+
+
         }
     }
 }
